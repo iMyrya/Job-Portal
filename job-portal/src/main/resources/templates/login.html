@@ -1,0 +1,129 @@
+<!--
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Login - Job Portal</title></head>
+<body>
+<h2>Login</h2>
+<form th:action="@{/login}" method="post">
+    <input type="email"    name="username" placeholder="Email" required/><br/>
+    <input type="password" name="password" placeholder="Password" required/><br/>
+    <button type="submit">Login</button>
+</form>
+<a th:href="@{/register}">Don't have an account? Register</a>
+</body>
+</html>
+-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign In – JobPortal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Source Sans 3', 'Helvetica Neue', Arial, sans-serif; background: #f3f2ef; min-height: 100vh; display: flex; flex-direction: column; }
+
+    header { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 0 24px; height: 52px; display: flex; align-items: center; justify-content: space-between; }
+    .brand { font-size: 1.45rem; font-weight: 700; color: #0a66c2; text-decoration: none; letter-spacing: -0.5px; }
+    .brand em { color: #333; font-style: normal; }
+    .hdr-btn { font-size: 0.88rem; font-weight: 600; color: #0a66c2; text-decoration: none; padding: 6px 14px; border-radius: 24px; border: 1.5px solid #0a66c2; transition: background 0.15s; }
+    .hdr-btn:hover { background: #e8f0fb; }
+
+    main { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding: 48px 16px; }
+    .wrap { display: flex; gap: 48px; align-items: flex-start; max-width: 960px; width: 100%; }
+
+    .tagline { flex: 1; padding-top: 36px; }
+    .tagline h1 { font-size: 2rem; font-weight: 700; color: #0a66c2; line-height: 1.25; letter-spacing: -0.5px; }
+    .tagline p { margin-top: 12px; font-size: 0.95rem; color: #555; line-height: 1.6; }
+    .tagline ul { margin-top: 24px; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .tagline li { font-size: 0.9rem; color: #444; display: flex; align-items: center; gap: 10px; }
+    .tagline li::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #0a66c2; flex-shrink: 0; }
+
+    .card { background: #fff; border-radius: 8px; border: 1px solid #e0e0e0; padding: 32px 28px 24px; width: 100%; max-width: 400px; flex-shrink: 0; }
+    .card h2 { font-size: 1.45rem; font-weight: 700; color: #111; margin-bottom: 22px; }
+
+    .alert { padding: 10px 14px; border-radius: 4px; font-size: 0.85rem; margin-bottom: 16px; }
+    .alert-err { background: #fdecea; border: 1px solid #f5c6c6; color: #b00020; }
+    .alert-ok  { background: #e6f4ea; border: 1px solid #a8d5b5; color: #1a6630; }
+
+    .fg { margin-bottom: 16px; }
+    .fg label { display: block; font-size: 0.85rem; font-weight: 600; color: #333; margin-bottom: 4px; }
+    .fg input { width: 100%; padding: 11px 14px; border: 1px solid #b0b0b0; border-radius: 4px; font-size: 0.95rem; font-family: inherit; color: #111; outline: none; transition: border-color 0.15s; }
+    .fg input:focus { border-color: #0a66c2; }
+    .fg input::placeholder { color: #bbb; }
+    .forgot { display: block; text-align: right; font-size: 0.82rem; color: #0a66c2; text-decoration: none; margin-top: 5px; }
+    .forgot:hover { text-decoration: underline; }
+
+    .btn { width: 100%; padding: 12px; background: #0a66c2; color: #fff; border: none; border-radius: 24px; font-size: 0.98rem; font-weight: 700; font-family: inherit; cursor: pointer; transition: background 0.15s; margin-top: 8px; }
+    .btn:hover { background: #004182; }
+
+    .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; font-size: 0.8rem; color: #999; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #e0e0e0; }
+
+    .join-link { text-align: center; margin-top: 20px; padding-top: 18px; border-top: 1px solid #e0e0e0; font-size: 0.88rem; color: #555; }
+    .join-link a { color: #0a66c2; font-weight: 700; text-decoration: none; }
+    .join-link a:hover { text-decoration: underline; }
+
+    footer { background: #fff; border-top: 1px solid #e0e0e0; padding: 16px 24px; text-align: center; }
+    .flinks { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; margin-bottom: 6px; }
+    .flinks a { font-size: 0.75rem; color: #777; text-decoration: none; }
+    .flinks a:hover { text-decoration: underline; color: #333; }
+    footer small { font-size: 0.72rem; color: #aaa; }
+
+    @media (max-width: 680px) { .tagline { display: none; } .wrap { justify-content: center; } .card { max-width: 100%; } }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="#">Job<em>Portal</em></a>
+  <a class="hdr-btn" th:href="@{/register}">Join now</a>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="tagline">
+      <h1>Your next opportunity starts here.</h1>
+      <p>Connect with top recruiters, explore listings, and take your career forward.</p>
+      <ul>
+        <li>Thousands of active job listings</li>
+        <li>Recruiters from top companies</li>
+        <li>Track your applications in real time</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Sign in</h2>
+      <div class="alert alert-err" th:if="${param.error}">Incorrect email or password. Please try again.</div>
+      <div class="alert alert-ok"  th:if="${param.logout}">You have been signed out successfully.</div>
+
+      <form th:action="@{/login}" method="post">
+        <div class="fg">
+          <label for="username">Email</label>
+          <input type="email" id="username" name="username" placeholder="Enter your email" required/>
+        </div>
+        <div class="fg">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required/>
+          <a href="#" class="forgot">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn">Sign in</button>
+      </form>
+
+      <div class="divider">or</div>
+
+      <div class="join-link">New to JobPortal? <a th:href="@{/register}">Join now</a></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="flinks">
+    <a href="#">About</a><a href="#">Help Center</a><a href="#">Privacy Policy</a><a href="#">Terms of Service</a>
+  </div>
+  <small>JobPortal &copy; 2026</small>
+</footer>
+
+</body>
+</html>

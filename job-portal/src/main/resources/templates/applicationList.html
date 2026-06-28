@@ -1,0 +1,201 @@
+<!--
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Applicants</title></head>
+<body>
+<h2>Applicants</h2>
+<div th:each="app : ${applications}">
+    <p th:text="${app.applicant.fullName} + ' (' + ${app.applicant.email} + ')'"></p>
+    <p>Status: <span th:text="${app.status}"></span></p>
+    <form th:action="@{/recruiter/applications/status/{id}(id=${app.id})}" method="post">
+        <select name="status">
+            <option value="APPLIED">Applied</option>
+            <option value="REVIEWED">Reviewed</option>
+            <option value="SELECTED">Selected</option>
+            <option value="REJECTED">Rejected</option>
+        </select>
+        <button type="submit">Update</button>
+    </form>
+    <hr/>
+</div>
+</body>
+</html>
+-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Applicants – JobPortal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Source Sans 3', 'Helvetica Neue', Arial, sans-serif; background: #f3f2ef; min-height: 100vh; display: flex; flex-direction: column; color: #111; }
+
+    /* NAV */
+    header { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 0 24px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+    .brand { font-size: 1.45rem; font-weight: 700; color: #0a66c2; text-decoration: none; letter-spacing: -0.5px; }
+    .brand em { color: #333; font-style: normal; }
+    nav { display: flex; align-items: center; gap: 8px; }
+    nav a { font-size: 0.88rem; color: #555; text-decoration: none; padding: 6px 14px; border-radius: 24px; font-weight: 600; transition: background 0.15s, color 0.15s; }
+    nav a:hover { background: #f3f2ef; color: #111; }
+    nav .btn-logout { color: #888; }
+
+    /* LAYOUT */
+    main { flex: 1; max-width: 900px; width: 100%; margin: 32px auto; padding: 0 16px; }
+
+    /* PAGE HEADER */
+    .page-header { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px; }
+    .page-header .back { font-size: 0.82rem; color: #0a66c2; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 8px; }
+    .page-header .back:hover { text-decoration: underline; }
+    .page-header h2 { font-size: 1.15rem; font-weight: 700; color: #111; margin-bottom: 3px; }
+    .page-header .meta { font-size: 0.85rem; color: #777; }
+    .page-header .meta span { margin-right: 14px; }
+
+    /* COUNTS ROW */
+    .counts-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+    .count-pill { font-size: 0.78rem; font-weight: 700; padding: 5px 13px; border-radius: 24px; }
+    .pill-all      { background: #e0e0e0; color: #444; }
+    .pill-applied  { background: #e8f0fb; color: #0a66c2; }
+    .pill-reviewed { background: #fff3cd; color: #856404; }
+    .pill-selected { background: #d4edda; color: #155724; }
+    .pill-rejected { background: #fdecea; color: #b00020; }
+
+    /* SECTION HEADER */
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .section-header h3 { font-size: 1rem; font-weight: 700; color: #111; }
+
+    /* APPLICANT ROW */
+    .app-row { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; transition: border-color 0.15s; }
+    .app-row:hover { border-color: #b0b0b0; }
+    .avatar-sm { width: 38px; height: 38px; border-radius: 50%; background: #0a66c2; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; font-weight: 700; flex-shrink: 0; }
+    .app-info { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+    .app-info h4 { font-size: 0.95rem; font-weight: 700; color: #111; margin-bottom: 2px; }
+    .app-info p  { font-size: 0.82rem; color: #777; }
+    .app-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; flex-wrap: wrap; }
+
+    /* STATUS BADGE (display only) */
+    .badge { display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 24px; text-transform: uppercase; letter-spacing: 0.03em; }
+    .badge-applied   { background: #e8f0fb; color: #0a66c2; }
+    .badge-reviewed  { background: #fff3cd; color: #856404; }
+    .badge-selected  { background: #d4edda; color: #155724; }
+    .badge-rejected  { background: #fdecea; color: #b00020; }
+
+    /* STATUS UPDATE FORM */
+    .status-form { display: flex; align-items: center; gap: 8px; }
+    .status-form select { padding: 7px 10px; border: 1px solid #b0b0b0; border-radius: 4px; font-size: 0.82rem; font-family: inherit; color: #111; outline: none; cursor: pointer; transition: border-color 0.15s; background: #fff; }
+    .status-form select:focus { border-color: #0a66c2; }
+    .btn-update { background: #0a66c2; color: #fff; border: none; padding: 7px 16px; border-radius: 24px; font-size: 0.82rem; font-weight: 700; font-family: inherit; cursor: pointer; transition: background 0.15s; }
+    .btn-update:hover { background: #004182; }
+
+    /* EMPTY */
+    .empty { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 48px 24px; text-align: center; color: #999; }
+    .empty h4 { font-size: 1rem; font-weight: 600; color: #555; margin-bottom: 6px; }
+    .empty p { font-size: 0.85rem; }
+
+    footer { background: #fff; border-top: 1px solid #e0e0e0; padding: 16px 24px; text-align: center; margin-top: auto; }
+    .flinks { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; margin-bottom: 6px; }
+    .flinks a { font-size: 0.75rem; color: #777; text-decoration: none; }
+    .flinks a:hover { text-decoration: underline; color: #333; }
+    footer small { font-size: 0.72rem; color: #aaa; }
+
+    @media (max-width: 620px) { .app-row { flex-direction: column; align-items: flex-start; } .status-form { width: 100%; } .status-form select { flex: 1; } }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="/dashboard">Job<em>Portal</em></a>
+  <nav>
+    <a href="/dashboard">← Dashboard</a>
+    <form th:action="@{/logout}" method="post" style="display:inline;">
+    <button type="submit" class="btn-logout"
+            style="background:none;border:none;cursor:pointer;font-family:inherit;font-size:0.88rem;font-weight:600;color:#888;padding:6px 14px;border-radius:24px;">
+        Sign out
+    </button>
+</form>
+  </nav>
+</header>
+
+<main>
+
+  <!-- Page header — shows job info at top -->
+  <div class="page-header">
+    <a class="back" href="/dashboard">← Back to Dashboard</a>
+    <h2 th:if="${applications != null and !applications.isEmpty()}"
+        th:text="${applications[0].job.title}">Job Title</h2>
+    <h2 th:if="${applications == null or applications.isEmpty()}">Applicants</h2>
+    <div class="meta" th:if="${applications != null and !applications.isEmpty()}">
+      <span th:text="${applications[0].job.company}">Company</span>
+      <span th:text="${applications[0].job.location}">Location</span>
+    </div>
+  </div>
+
+  <!-- Summary pills -->
+  <div class="counts-row" th:if="${applications != null and !applications.isEmpty()}">
+    <span class="count-pill pill-all"
+          th:text="${applications.size()} + ' total'">0 total</span>
+    <span class="count-pill pill-applied"
+          th:text="${#lists.size(applications.?[status.name() == 'APPLIED'])} + ' applied'">0 applied</span>
+    <span class="count-pill pill-reviewed"
+          th:text="${#lists.size(applications.?[status.name() == 'REVIEWED'])} + ' reviewed'">0 reviewed</span>
+    <span class="count-pill pill-selected"
+          th:text="${#lists.size(applications.?[status.name() == 'SELECTED'])} + ' selected'">0 selected</span>
+    <span class="count-pill pill-rejected"
+          th:text="${#lists.size(applications.?[status.name() == 'REJECTED'])} + ' rejected'">0 rejected</span>
+  </div>
+
+  <!-- Section header -->
+  <div class="section-header">
+    <h3>All Applicants</h3>
+  </div>
+
+  <!-- Empty state -->
+  <div th:if="${applications == null or applications.isEmpty()}" class="empty">
+    <h4>No applicants yet</h4>
+    <p>Share your job listing to start receiving applications.</p>
+  </div>
+
+  <!-- Applicant rows -->
+  <div th:each="app : ${applications}" class="app-row">
+    <div class="app-info">
+      <div class="avatar-sm" th:text="${app.applicant.fullName.substring(0,1).toUpperCase()}">A</div>
+      <div>
+        <h4 th:text="${app.applicant.fullName}">Applicant Name</h4>
+        <p th:text="${app.applicant.email}">applicant@email.com</p>
+      </div>
+    </div>
+    <div class="app-actions">
+      <!-- Current status badge -->
+      <span class="badge"
+        th:classappend="${app.status.name() == 'APPLIED'   ? 'badge-applied'   :
+                          app.status.name() == 'REVIEWED'  ? 'badge-reviewed'  :
+                          app.status.name() == 'SELECTED'  ? 'badge-selected'  :
+                          'badge-rejected'}"
+        th:text="${app.status}">APPLIED</span>
+      <!-- Update status form -->
+      <form class="status-form"
+            th:action="@{/recruiter/applications/status/{id}(id=${app.id})}"
+            method="post">
+        <select name="status">
+          <option value="APPLIED"   th:selected="${app.status.name() == 'APPLIED'}">Applied</option>
+          <option value="REVIEWED"  th:selected="${app.status.name() == 'REVIEWED'}">Reviewed</option>
+          <option value="SELECTED"  th:selected="${app.status.name() == 'SELECTED'}">Selected</option>
+          <option value="REJECTED"  th:selected="${app.status.name() == 'REJECTED'}">Rejected</option>
+        </select>
+        <button type="submit" class="btn-update">Update</button>
+      </form>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="flinks">
+    <a href="#">About</a><a href="#">Help Center</a><a href="#">Privacy Policy</a><a href="#">Terms of Service</a>
+  </div>
+  <small>JobPortal &copy; 2026</small>
+</footer>
+
+</body>
+</html>

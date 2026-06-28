@@ -1,0 +1,159 @@
+<!--  
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Post a Job</title></head>
+<body>
+<h2>Post a New Job</h2>
+<form th:action="@{/recruiter/post-job}" th:object="${job}" method="post">
+    <input type="text" th:field="*{title}"          placeholder="Job Title" required/><br/>
+    <input type="text" th:field="*{company}"        placeholder="Company Name" required/><br/>
+    <input type="text" th:field="*{location}"       placeholder="Location" required/><br/>
+    <textarea          th:field="*{description}"    placeholder="Job Description"></textarea><br/>
+    <input type="text" th:field="*{skillsRequired}" placeholder="Skills (e.g. Java, SQL)"/><br/>
+    <button type="submit">Post Job</button>
+</form>
+</body>
+</html>
+-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Post a Job – JobPortal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Source Sans 3', 'Helvetica Neue', Arial, sans-serif; background: #f3f2ef; min-height: 100vh; display: flex; flex-direction: column; color: #111; }
+
+    /* NAV */
+    header { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 0 24px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+    .brand { font-size: 1.45rem; font-weight: 700; color: #0a66c2; text-decoration: none; letter-spacing: -0.5px; }
+    .brand em { color: #333; font-style: normal; }
+    nav { display: flex; align-items: center; gap: 8px; }
+    nav a { font-size: 0.88rem; color: #555; text-decoration: none; padding: 6px 14px; border-radius: 24px; font-weight: 600; transition: background 0.15s, color 0.15s; }
+    nav a:hover { background: #f3f2ef; color: #111; }
+    nav .btn-dash { color: #0a66c2; }
+    nav .btn-logout { color: #888; }
+
+    /* LAYOUT */
+    main { flex: 1; max-width: 680px; width: 100%; margin: 32px auto; padding: 0 16px; }
+
+    /* PAGE TITLE */
+    .page-title { margin-bottom: 20px; }
+    .page-title h2 { font-size: 1.4rem; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .page-title p { font-size: 0.88rem; color: #777; }
+
+    /* CARD */
+    .card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 28px 28px 24px; }
+
+    /* FORM GROUPS */
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .fg { margin-bottom: 18px; }
+    .fg label { display: block; font-size: 0.85rem; font-weight: 600; color: #333; margin-bottom: 5px; }
+    .fg input, .fg textarea, .fg select {
+      width: 100%; padding: 11px 14px; border: 1px solid #b0b0b0; border-radius: 4px;
+      font-size: 0.95rem; font-family: inherit; color: #111; outline: none;
+      transition: border-color 0.15s; background: #fff;
+    }
+    .fg input:focus, .fg textarea:focus, .fg select:focus { border-color: #0a66c2; }
+    .fg input::placeholder, .fg textarea::placeholder { color: #bbb; }
+    .fg textarea { resize: vertical; min-height: 110px; line-height: 1.55; }
+    .fg .hint { font-size: 0.78rem; color: #aaa; margin-top: 4px; }
+
+    /* DIVIDER */
+    .divider { border: none; border-top: 1px solid #e0e0e0; margin: 6px 0 22px; }
+
+    /* SECTION LABEL */
+    .section-lbl { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #aaa; margin-bottom: 14px; }
+
+    /* BUTTONS */
+    .btn-row { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+    .btn { padding: 11px 28px; border-radius: 24px; font-size: 0.95rem; font-weight: 700; font-family: inherit; cursor: pointer; transition: background 0.15s, color 0.15s; text-decoration: none; display: inline-block; border: none; }
+    .btn-primary { background: #0a66c2; color: #fff; }
+    .btn-primary:hover { background: #004182; }
+    .btn-ghost { background: transparent; color: #555; border: 1.5px solid #ccc; }
+    .btn-ghost:hover { background: #f3f2ef; color: #111; border-color: #aaa; }
+
+    footer { background: #fff; border-top: 1px solid #e0e0e0; padding: 16px 24px; text-align: center; margin-top: auto; }
+    .flinks { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; margin-bottom: 6px; }
+    .flinks a { font-size: 0.75rem; color: #777; text-decoration: none; }
+    .flinks a:hover { text-decoration: underline; color: #333; }
+    footer small { font-size: 0.72rem; color: #aaa; }
+
+    @media (max-width: 520px) { .row-2 { grid-template-columns: 1fr; } .btn-row { flex-direction: column-reverse; } .btn { text-align: center; } }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="/dashboard">Job<em>Portal</em></a>
+  <nav>
+    <a href="/dashboard" class="btn-dash">← Dashboard</a>
+   <form th:action="@{/logout}" method="post" style="display:inline;">
+    <button type="submit" class="btn-logout"
+            style="background:none;border:none;cursor:pointer;font-family:inherit;font-size:0.88rem;font-weight:600;color:#888;padding:6px 14px;border-radius:24px;">
+        Sign out
+    </button>
+</form>
+  </nav>
+</header>
+
+<main>
+  <div class="page-title">
+    <h2>Post a New Job</h2>
+    <p>Fill in the details below to attract the right candidates.</p>
+  </div>
+
+  <div class="card">
+    <form th:action="@{/recruiter/post-job}" th:object="${job}" method="post">
+
+      <p class="section-lbl">Job Details</p>
+
+      <div class="fg">
+        <label for="title">Job Title <span style="color:#b00020">*</span></label>
+        <input type="text" id="title" th:field="*{title}" placeholder="e.g. Java Backend Developer" required/>
+      </div>
+
+      <div class="row-2">
+        <div class="fg">
+          <label for="company">Company Name <span style="color:#b00020">*</span></label>
+          <input type="text" id="company" th:field="*{company}" placeholder="e.g. Infosys" required/>
+        </div>
+        <div class="fg">
+          <label for="location">Location <span style="color:#b00020">*</span></label>
+          <input type="text" id="location" th:field="*{location}" placeholder="e.g. Pune, Remote"/>
+        </div>
+      </div>
+
+      <div class="fg">
+        <label for="description">Job Description <span style="color:#b00020">*</span></label>
+        <textarea id="description" th:field="*{description}" placeholder="Describe the role, responsibilities, and what you're looking for…" required></textarea>
+      </div>
+
+      <hr class="divider"/>
+      <p class="section-lbl">Requirements</p>
+
+      <div class="fg">
+        <label for="skillsRequired">Required Skills</label>
+        <input type="text" id="skillsRequired" th:field="*{skillsRequired}" placeholder="e.g. Java, Spring Boot, MySQL, REST API"/>
+        <p class="hint">Separate skills with commas. These will be shown as tags on the listing.</p>
+      </div>
+
+      <div class="btn-row">
+        <a href="/dashboard" class="btn btn-ghost">Cancel</a>
+        <button type="submit" class="btn btn-primary">Post Job</button>
+      </div>
+    </form>
+  </div>
+</main>
+
+<footer>
+  <div class="flinks">
+    <a href="#">About</a><a href="#">Help Center</a><a href="#">Privacy Policy</a><a href="#">Terms of Service</a>
+  </div>
+  <small>JobPortal &copy; 2026</small>
+</footer>
+
+</body>
+</html>

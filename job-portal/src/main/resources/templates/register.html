@@ -1,0 +1,129 @@
+<!--  
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Register - Job Portal</title></head>
+<body>
+<h2>Register</h2>
+<form th:action="@{/register}" th:object="${user}" method="post">
+    <input type="text"     th:field="*{fullName}"  placeholder="Full Name" required/><br/>
+    <input type="email"    th:field="*{email}"     placeholder="Email" required/><br/>
+    <input type="password" th:field="*{password}"  placeholder="Password" required/><br/>
+    <select th:field="*{role}">
+        <option value="JOBSEEKER">Job Seeker</option>
+        <option value="RECRUITER">Recruiter</option>
+    </select><br/>
+    <button type="submit">Register</button>
+</form>
+</body>
+</html>
+-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Join JobPortal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Source Sans 3', 'Helvetica Neue', Arial, sans-serif; background: #f3f2ef; min-height: 100vh; display: flex; flex-direction: column; }
+
+    header { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 0 24px; height: 52px; display: flex; align-items: center; justify-content: space-between; }
+    .brand { font-size: 1.45rem; font-weight: 700; color: #0a66c2; text-decoration: none; letter-spacing: -0.5px; }
+    .brand em { color: #333; font-style: normal; }
+    .hdr-right { display: flex; align-items: center; gap: 8px; font-size: 0.88rem; color: #555; }
+    .hdr-right a { color: #0a66c2; font-weight: 700; text-decoration: none; }
+    .hdr-right a:hover { text-decoration: underline; }
+
+    main { flex: 1; display: flex; justify-content: center; padding: 40px 16px; }
+
+    .card { background: #fff; border-radius: 8px; border: 1px solid #e0e0e0; padding: 32px 28px 24px; width: 100%; max-width: 480px; }
+    .card h2 { font-size: 1.45rem; font-weight: 700; color: #111; margin-bottom: 6px; }
+    .card .sub { font-size: 0.88rem; color: #777; margin-bottom: 24px; }
+
+    .fg { margin-bottom: 16px; }
+    .fg label { display: block; font-size: 0.85rem; font-weight: 600; color: #333; margin-bottom: 4px; }
+    .fg input { width: 100%; padding: 11px 14px; border: 1px solid #b0b0b0; border-radius: 4px; font-size: 0.95rem; font-family: inherit; color: #111; outline: none; transition: border-color 0.15s; }
+    .fg input:focus { border-color: #0a66c2; }
+    .fg input::placeholder { color: #bbb; }
+
+    /* role selector — two plain bordered options */
+    .role-label { font-size: 0.85rem; font-weight: 600; color: #333; margin-bottom: 8px; display: block; }
+    .role-options { display: flex; gap: 10px; margin-bottom: 20px; }
+    .role-options input[type=radio] { display: none; }
+    .role-options label { flex: 1; text-align: center; padding: 10px 12px; border: 1px solid #b0b0b0; border-radius: 4px; font-size: 0.88rem; font-weight: 600; color: #555; cursor: pointer; transition: border-color 0.15s, color 0.15s, background 0.15s; }
+    .role-options input[type=radio]:checked + label { border-color: #0a66c2; color: #0a66c2; background: #e8f0fb; }
+    .role-options label:hover { border-color: #888; color: #333; }
+
+    .btn { width: 100%; padding: 12px; background: #0a66c2; color: #fff; border: none; border-radius: 24px; font-size: 0.98rem; font-weight: 700; font-family: inherit; cursor: pointer; transition: background 0.15s; }
+    .btn:hover { background: #004182; }
+
+    .terms { font-size: 0.78rem; color: #777; line-height: 1.5; margin-bottom: 18px; }
+    .terms a { color: #0a66c2; text-decoration: none; }
+    .terms a:hover { text-decoration: underline; }
+
+    .login-link { text-align: center; margin-top: 20px; padding-top: 18px; border-top: 1px solid #e0e0e0; font-size: 0.88rem; color: #555; }
+    .login-link a { color: #0a66c2; font-weight: 700; text-decoration: none; }
+    .login-link a:hover { text-decoration: underline; }
+
+    footer { background: #fff; border-top: 1px solid #e0e0e0; padding: 16px 24px; text-align: center; }
+    .flinks { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; margin-bottom: 6px; }
+    .flinks a { font-size: 0.75rem; color: #777; text-decoration: none; }
+    .flinks a:hover { text-decoration: underline; color: #333; }
+    footer small { font-size: 0.72rem; color: #aaa; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="#">Job<em>Portal</em></a>
+  <div class="hdr-right">
+    Already on JobPortal? <a th:href="@{/login}">Sign in</a>
+  </div>
+</header>
+
+<main>
+  <div class="card">
+    <h2>Create your account</h2>
+    <p class="sub">Start your job search or find great talent today.</p>
+
+    <form th:action="@{/register}" th:object="${user}" method="post">
+      <div class="fg">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" th:field="*{fullName}" placeholder="Your full name" required/>
+      </div>
+      <div class="fg">
+        <label for="email">Email</label>
+        <input type="email" id="email" th:field="*{email}" placeholder="Enter your email" required/>
+      </div>
+      <div class="fg">
+        <label for="password">Password</label>
+        <input type="password" id="password" th:field="*{password}" placeholder="Minimum 6 characters" required/>
+      </div>
+
+      <span class="role-label">I am a</span>
+      <div class="role-options">
+        <input type="radio" th:field="*{role}" id="js" value="JOBSEEKER"/>
+        <label for="js">Job Seeker</label>
+        <input type="radio" th:field="*{role}" id="rc" value="RECRUITER"/>
+        <label for="rc">Recruiter</label>
+      </div>
+
+      <p class="terms">By creating an account, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+
+      <button type="submit" class="btn">Agree &amp; Join</button>
+    </form>
+
+    <div class="login-link">Already on JobPortal? <a th:href="@{/login}">Sign in</a></div>
+  </div>
+</main>
+
+<footer>
+  <div class="flinks">
+    <a href="#">About</a><a href="#">Help Center</a><a href="#">Privacy Policy</a><a href="#">Terms of Service</a>
+  </div>
+  <small>JobPortal &copy; 2026</small>
+</footer>
+
+</body>
+</html>

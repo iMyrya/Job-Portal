@@ -1,0 +1,20 @@
+# Maven
+target/
+*.class
+*.jar
+*.war
+
+# Application secrets - never commit the real one
+src/main/resources/application.properties
+
+# IDE files
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+*.eclipse
+
+# OS
+.DS_Store
+Thumbs.db
