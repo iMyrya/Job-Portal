@@ -8,7 +8,10 @@ Built with Java Spring Boot, Spring Security, MySQL, and Thymeleaf.
 
 ## Screenshots
 
-> Add your screenshots here
+![Login](J_P%20ScreenShots/Screenshot%202026-06-28%20134602.png)
+![Register](J_P%20ScreenShots/Screenshot%202026-06-28%20134651.png)
+![Jobs](J_P%20ScreenShots/Screenshot%202026-06-28%20134721.png)
+![Dashboard](J_P%20ScreenShots/Screenshot%202026-06-28%20134811.png)
 
 ---
 
